@@ -18,3 +18,4 @@ sr.Close();
     //s.Print();
 }*/
 Console.WriteLine(result.Count);
+Console.WriteLine("bashtalos`");
