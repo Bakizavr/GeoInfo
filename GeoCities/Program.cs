@@ -17,3 +17,4 @@ sr.Close();
     Console.WriteLine(s);
     //s.Print();
 }*/
+Console.WriteLine(result.Count);
