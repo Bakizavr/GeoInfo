@@ -37,7 +37,7 @@ class Infoservice
         int t = count_on_page * page_number;
         if (page_number <= summ)
         {
-            for (int i = t - count_on_page - 1; i < t; i++)
+            for (int i = t - count_on_page; i < t; i++)
             {
                 GeoInfo arr = list[i];
                 Type fieldsType = typeof(GeoInfo);
@@ -46,6 +46,7 @@ class Infoservice
                 {
                     Console.Write($"{f[j].GetValue(arr)}\t");
                 }
+                Console.WriteLine();
             }
         }
 
