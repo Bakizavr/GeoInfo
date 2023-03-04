@@ -1,21 +1,21 @@
-﻿StreamReader sr = new StreamReader("D:\\Lessons\\RU\\Example.txt");
-List<GeoInfo> result = new List<GeoInfo>();
-
-string line = sr.ReadLine();
-while (line != null)
+﻿List<GeoInfo> result = new List<GeoInfo>();
+foreach (var line in File.ReadLines("D:\\Lessons\\RU\\Example.txt"))
 {
     string[] subs = line.Split('\t');
     GeoInfo city = new GeoInfo(subs);
     result.Add(city);
-    line = sr.ReadLine();
 }
-
-sr.Close();
-
+//проверка
 /*foreach (var s in result)
 {
-    Console.WriteLine(s);
-    //s.Print();
+    s.Print();
 }*/
-Console.WriteLine(result.Count);
-Console.WriteLine("bashtalos`");
+
+//кол-во городов на странице
+int y = 4;
+//номер страницы
+int z = 2;
+string id = "451749";
+Infoservice mass = new Infoservice(y, z, id, result);
+mass.First();
+mass.Second();

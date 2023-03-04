@@ -1,7 +1,4 @@
-﻿
-
-
-class GeoInfo
+﻿class GeoInfo
 {
     public string geonameid;
     public string name;
