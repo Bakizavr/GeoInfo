@@ -80,9 +80,11 @@ namespace GeoInfo.Service
                 if (city1.TimeZone == city2.TimeZone) { info2 = "Города в одной временной зоне"; }
                 else
                 {
-                    var timeOfCity1 = new TimeZoneDict()._timeZones[city1.TimeZone];
-                    var timeOfCity2 = new TimeZoneDict()._timeZones[city2.TimeZone];
-                    info2 = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(timeOfCity2 - timeOfCity1)}";
+                    var _cityDict = new TimeZoneDict();
+                    _cityDict.Dict();
+                    var timeOfCity1 = _cityDict._timeZones[city1.TimeZone];
+                    var timeOfCity2 = _cityDict._timeZones[city2.TimeZone];
+                    info2 = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(timeOfCity2 - timeOfCity1)} час(а).";
                 }
             }
 
