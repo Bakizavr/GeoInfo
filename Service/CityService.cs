@@ -78,7 +78,12 @@ namespace GeoInfo.Service
                 else { info1 = $"Город {city2.Name} находится севернее города {city1.Name}."; }
 
                 if (city1.TimeZone == city2.TimeZone) { info2 = "Города в одной временной зоне"; }
-                else { info2 = "Города в разных временных зонах"; }
+                else
+                {
+                    var timeOfCity1 = new TimeZoneDict()._timeZones[city1.TimeZone];
+                    var timeOfCity2 = new TimeZoneDict()._timeZones[city2.TimeZone];
+                    info2 = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(timeOfCity2 - timeOfCity1)}";
+                }
             }
 
             var Info = info1 + " " + info2;
