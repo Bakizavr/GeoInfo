@@ -32,12 +32,12 @@ public class DataBaseInitializator
         var subs = line.Split('\t');
         var city = new City()
         {
-            Id= int.Parse(subs[0]),
+            Id = int.Parse(subs[0]),
             Name = subs[1],
             AsciiName = subs[2],
             AlternateName = subs[3],
-            Latitude = subs[4],
-            Longitude = subs[5],
+            Latitude = Decimal.Parse(subs[4]),
+            Longitude = Decimal.Parse(subs[5]),
             FeatureClass = subs[6],
             FeatureCode = subs[7],
             CountryCode = subs[8],
@@ -46,11 +46,11 @@ public class DataBaseInitializator
             Admin2Code = subs[11],
             Admin3Code = subs[12],
             Admin4Code = subs[13],
-            Population = subs[14],
-            Elevation = subs[15],
-            Dem = subs[16],
+            Population = int.Parse(subs[14]),
+            Elevation = int.Parse(subs[15]),
+            Dem = int.Parse(subs[16]),
             TimeZone = subs[17],
-            ModificationDate = subs[18],
+            ModificationDate = DateTime.Parse(subs[18]),
         };
         return city;
     }

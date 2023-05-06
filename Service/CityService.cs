@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace GeoInfo.Service
 {
@@ -100,9 +102,12 @@ namespace GeoInfo.Service
         /// <returns>Идентификатор созданного города</returns>
         public async Task<long> CreateCityAsync(CreateCity createCity)
         {
-            var _city = CreateCity.CreateCityDto(createCity);
-            await DataBaseContext.Cities.AddAsync(_city);
+            var city = City.Create(createCity.Id, createCity.Name, createCity.AsciiName, createCity.AlternateName, createCity.Latitude, createCity.Longitude, createCity.FeatureClass, createCity.FeatureCode, createCity.CountryCode, createCity.Cc2, createCity.Admin1Code, createCity.Admin2Code, createCity.Admin3Code, createCity.Admin4Code, createCity.Population, createCity.Elevation, createCity.Dem, createCity.TimeZone, createCity.ModificationDate);
+            
+            await DataBaseContext.Cities.AddAsync(city);
+            
             await DataBaseContext.SaveChangesAsync();
+
             return createCity.Id;
         }
 
@@ -113,33 +118,19 @@ namespace GeoInfo.Service
         /// <param name="updateCity">Данные о городе</param>
         public async Task UpdateCityAsync(long id, UpdateCity updateCity)
         {
-            var _city = UpdateCity.UpdateCityDto(updateCity);
 
             var city = await DataBaseContext.Cities.FirstOrDefaultAsync(c => c.Id == id);
 
             if (city != null) return;
 
-            city.Name = _city.Name;
-            city.AsciiName = _city.AsciiName;
-            city.AlternateName = _city.AlternateName;
-            city.Latitude = _city.Latitude;
-            city.Longitude = _city.Longitude;
-            city.FeatureClass = _city.FeatureClass;
-            city.FeatureCode = _city.FeatureCode;
-            city.CountryCode = _city.CountryCode;
-            city.Cc2 = _city.Cc2;
-            city.Admin1Code = _city.Admin1Code;
-            city.Admin2Code = _city.Admin2Code;
-            city.Admin3Code = _city.Admin3Code;
-            city.Admin4Code = _city.Admin4Code;
-            city.Population = _city.Population;
-            city.Elevation = _city.Elevation;
-            city.Dem = _city.Dem;
-            city.TimeZone = _city.TimeZone;
-            city.ModificationDate = _city.ModificationDate;
+            city.Name = updateCity.Name;
+            city.AsciiName = updateCity.AsciiName;
+            city.AlternateName = updateCity.AlternateName;
+            city.Latitude = updateCity.Latitude;
+            city.Longitude = updateCity.Longitude;
 
             await DataBaseContext.SaveChangesAsync();
-            return;
+
         }
 
         /// <summary>

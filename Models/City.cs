@@ -24,12 +24,12 @@ public class City
     /// <summary>
     /// Широта в десятичных градусах
     /// </summary>
-    public string Latitude { get; set; }
+    public decimal Latitude { get; set; }
 
     /// <summary>
     /// Долгота в десятичных градусах
     /// </summary>
-    public string Longitude { get; set; }
+    public decimal Longitude { get; set; }
 
     /// <summary>
     /// Класс признака
@@ -74,17 +74,17 @@ public class City
     /// <summary>
     /// Население (кол-во жителей)
     /// </summary>
-    public string Population { get; set; }
+    public int Population { get; set; }
 
     /// <summary>
     /// Альтитуда (высота над уровнем моря)
     /// </summary>
-    public string Elevation { get; set; }
+    public int Elevation { get; set; }
 
     /// <summary>
     /// Цифровая модель рельефа
     /// </summary>
-    public string Dem { get; set; }
+    public int Dem { get; set; }
 
     /// <summary>
     /// Часовой пояс (идентификатор)
@@ -94,5 +94,36 @@ public class City
     /// <summary>
     /// Дата последней модификации в формате yyyy-MM-dd
     /// </summary>
-    public string ModificationDate { get; set; }
+    public DateTime ModificationDate { get; set; }
+
+    public static City Create(long Id, string Name, string AsciiName, string AlternateName, decimal Latitude, decimal Longitude, string FeatureClass, string FeatureCode, string CountryCode, string Cc2, string Admin1Code, string Admin2Code, string Admin3Code, string Admin4Code, int Population, int Elevation, int Dem, string TimeZone)
+    {
+        var city = new City
+        {
+            Id = Id,
+            Name = Name,
+            AsciiName = AsciiName,
+            AlternateName = AlternateName,
+            Latitude = Latitude,
+            Longitude = Longitude,
+            FeatureClass = FeatureClass,
+            FeatureCode = FeatureCode,
+            CountryCode = CountryCode,
+            Cc2 = Cc2,
+            Admin1Code = Admin1Code,
+            Admin2Code = Admin2Code,
+            Admin3Code = Admin3Code,
+            Admin4Code = Admin4Code,
+            Population = Population,
+            Elevation = Elevation,
+            Dem = Dem,
+            TimeZone = TimeZone,
+            ModificationDate = DateTime.Now
+        };
+        return city;
+    }
+
+    //public static void Update(long Id, string Name, string AsciiName, string AlternateName, string Latitude, string Longitude, string FeatureClass, string FeatureCode, string CountryCode, string Cc2, string Admin1Code, string Admin2Code, string Admin3Code, string Admin4Code, string Population, string Elevation, string Dem, string TimeZone, string ModificationDate)
+    //{
+    //}
 }
