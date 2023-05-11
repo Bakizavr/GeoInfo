@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Diagnostics;
 using System.Xml.Linq;
 
 namespace GeoInfo.Service
@@ -100,15 +99,15 @@ namespace GeoInfo.Service
         /// </summary>
         /// <param name="createCity">Модель города</param>
         /// <returns>Идентификатор созданного города</returns>
-        public async Task<long> CreateCityAsync(CreateCity createCity)
+        public async Task<long> CreateCityAsync(CreateCityDto createCity)
         {
-            var city = City.Create(createCity.Id, createCity.Name, createCity.AsciiName, createCity.AlternateName, createCity.Latitude, createCity.Longitude, createCity.FeatureClass, createCity.FeatureCode, createCity.CountryCode, createCity.Cc2, createCity.Admin1Code, createCity.Admin2Code, createCity.Admin3Code, createCity.Admin4Code, createCity.Population, createCity.Elevation, createCity.Dem, createCity.TimeZone, createCity.ModificationDate);
+            var city = City.Create(createCity.Name, createCity.AsciiName, createCity.AlternateName, createCity.Latitude, createCity.Longitude, createCity.FeatureClass, createCity.FeatureCode, createCity.CountryCode, createCity.Cc2, createCity.Population, createCity.Elevation, createCity.Dem, createCity.TimeZone);
             
             await DataBaseContext.Cities.AddAsync(city);
             
             await DataBaseContext.SaveChangesAsync();
 
-            return createCity.Id;
+            return city.Id;
         }
 
         /// <summary>
@@ -116,7 +115,7 @@ namespace GeoInfo.Service
         /// </summary>
         /// <param name="id">Идентификатор города</param>
         /// <param name="updateCity">Данные о городе</param>
-        public async Task UpdateCityAsync(long id, UpdateCity updateCity)
+        public async Task UpdateCityAsync(long id, UpdateCityDto updateCity)
         {
 
             var city = await DataBaseContext.Cities.FirstOrDefaultAsync(c => c.Id == id);

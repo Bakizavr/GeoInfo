@@ -20,7 +20,7 @@ public class DataBaseInitializator
     }
     private IEnumerable<City> GetCities()
     {
-        var lines = File.ReadLines("D:\\Lessons\\Geo\\NewProject\\RU.txt");
+        var lines = File.ReadLines("RU.txt");
         foreach (var line in lines)
         {
             yield return Map(line);
@@ -36,21 +36,17 @@ public class DataBaseInitializator
             Name = subs[1],
             AsciiName = subs[2],
             AlternateName = subs[3],
-            Latitude = Decimal.Parse(subs[4]),
-            Longitude = Decimal.Parse(subs[5]),
+            Latitude = Decimal.TryParse(subs[4], out var lat) ? lat : 0,
+            Longitude = Decimal.TryParse(subs[5], out var lon) ? lon : 0,
             FeatureClass = subs[6],
             FeatureCode = subs[7],
             CountryCode = subs[8],
             Cc2 = subs[9],
-            Admin1Code = subs[10],
-            Admin2Code = subs[11],
-            Admin3Code = subs[12],
-            Admin4Code = subs[13],
-            Population = int.Parse(subs[14]),
-            Elevation = int.Parse(subs[15]),
-            Dem = int.Parse(subs[16]),
+            Population = int.TryParse(subs[14], out var pop) ? pop : 0,
+            Elevation = int.TryParse(subs[15], out var el) ? el : 0,
+            Dem = int.TryParse(subs[16], out var dem) ? dem : 0,
             TimeZone = subs[17],
-            ModificationDate = DateTime.Parse(subs[18]),
+            ModificationDate = DateTime.TryParse(subs[18], out var mod) ? mod : DateTime.MinValue,
         };
         return city;
     }
