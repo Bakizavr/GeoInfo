@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -15,26 +16,22 @@ namespace GeoInfo.Migrations
                 name: "Cities",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
                     AsciiName = table.Column<string>(type: "text", nullable: true),
                     AlternateName = table.Column<string>(type: "text", nullable: true),
-                    Latitude = table.Column<string>(type: "text", nullable: true),
-                    Longitude = table.Column<string>(type: "text", nullable: true),
+                    Latitude = table.Column<decimal>(type: "numeric", nullable: false),
+                    Longitude = table.Column<decimal>(type: "numeric", nullable: false),
                     FeatureClass = table.Column<string>(type: "text", nullable: true),
                     FeatureCode = table.Column<string>(type: "text", nullable: true),
                     CountryCode = table.Column<string>(type: "text", nullable: true),
                     Cc2 = table.Column<string>(type: "text", nullable: true),
-                    Admin1Code = table.Column<string>(type: "text", nullable: true),
-                    Admin2Code = table.Column<string>(type: "text", nullable: true),
-                    Admin3Code = table.Column<string>(type: "text", nullable: true),
-                    Admin4Code = table.Column<string>(type: "text", nullable: true),
-                    Population = table.Column<string>(type: "text", nullable: true),
-                    Elevation = table.Column<string>(type: "text", nullable: true),
-                    Dem = table.Column<string>(type: "text", nullable: true),
+                    Population = table.Column<int>(type: "integer", nullable: false),
+                    Elevation = table.Column<int>(type: "integer", nullable: false),
+                    Dem = table.Column<int>(type: "integer", nullable: false),
                     TimeZone = table.Column<string>(type: "text", nullable: true),
-                    ModificationDate = table.Column<string>(type: "text", nullable: true)
+                    ModificationDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -20,7 +20,7 @@ public class DataBaseInitializator
     }
     private IEnumerable<City> GetCities()
     {
-        var lines = File.ReadLines("RU.txt");
+        var lines = File.ReadLines("InputFiles\\CityData.txt");
         foreach (var line in lines)
         {
             yield return Map(line);

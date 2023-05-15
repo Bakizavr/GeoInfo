@@ -97,9 +97,8 @@ public class City
         };
         return city;
     }
-
+    //TODO: упростить
     //public static void Update(long Id, string Name, string AsciiName, string AlternateName, string Latitude, string Longitude, string FeatureClass, string FeatureCode, string CountryCode, string Cc2, string Population, string Elevation, string Dem, string TimeZone, string ModificationDate)
     //{
-    //TODO: упростить
     //}
 }

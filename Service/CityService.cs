@@ -52,30 +52,20 @@ namespace GeoInfo.Service
         /// <returns>Информация о городах</returns>
         public async Task<TwoCitiesInfo<CityDto>> GetTwoCitiesAsync(string name1, string name2)
         {
-            var city1 = await DataBaseContext
-                .Cities
+            var cities = await DataBaseContext.Cities
+                .Where(x => EF.Functions.ILike(x.Name, $"%{name1}%") ||
+                            EF.Functions.ILike(x.Name, $"%{name2}%"))
+                .GroupBy(x => x.Name,
+                    (s, cities) => cities.OrderByDescending(c => c.Population).First())
                 .AsNoTracking()
-                .Where(city => city.Name == name1)
-                .OrderByDescending(city => city.Population)
-                .FirstOrDefaultAsync();
-
-            var city2 = await DataBaseContext
-                .Cities
-                .AsNoTracking()
-                .Where(city => city.Name == name2)
-                .OrderByDescending(city => city.Population)
-                .FirstOrDefaultAsync();
-
-            var cities = new List<City> { city1, city2 };
-
-            var _cities = cities.Where(x => x != null).Select(city => CityDto.CreateCityDto(city)).ToList();
+                .ToListAsync();
 
             string info1 = "";
             string info2 = "";
 
-            if (_cities.Count() == 2)
+            if (cities.Count() == 2)
             {
-                if (Convert.ToDouble(city1.Latitude) > Convert.ToDouble(city2.Latitude)) { info1 = $"Город {city1.Name} находится севернее города {city2.Name}."; }
+                if (city1.Latitude) > (city2.Latitude) { info1 = $"Город {city1.Name} находится севернее города {city2.Name}."; }
                 else { info1 = $"Город {city2.Name} находится севернее города {city1.Name}."; }
 
                 if (city1.TimeZone == city2.TimeZone) { info2 = "Города в одной временной зоне"; }
@@ -91,17 +81,17 @@ namespace GeoInfo.Service
 
             var Info = info1 + " " + info2;
 
-            return new TwoCitiesInfo<CityDto>(_cities, Info);
+            return new TwoCitiesInfo<CityDto>(cities, Info);
         }
 
         /// <summary>
         /// Добавление нового города
         /// </summary>
-        /// <param name="createCity">Модель города</param>
+        /// <param name="establishedCity">Модель города</param>
         /// <returns>Идентификатор созданного города</returns>
-        public async Task<long> CreateCityAsync(CreateCityDto createCity)
+        public async Task<long> CreateCityAsync(CreateCityDto establishedCity)
         {
-            var city = City.Create(createCity.Name, createCity.AsciiName, createCity.AlternateName, createCity.Latitude, createCity.Longitude, createCity.FeatureClass, createCity.FeatureCode, createCity.CountryCode, createCity.Cc2, createCity.Population, createCity.Elevation, createCity.Dem, createCity.TimeZone);
+            var city = City.Create(establishedCity.Name, establishedCity.AsciiName, establishedCity.AlternateName, establishedCity.Latitude, establishedCity.Longitude, establishedCity.FeatureClass, establishedCity.FeatureCode, establishedCity.CountryCode, establishedCity.Cc2, establishedCity.Population, establishedCity.Elevation, establishedCity.Dem, establishedCity.TimeZone);
             
             await DataBaseContext.Cities.AddAsync(city);
             
@@ -127,6 +117,15 @@ namespace GeoInfo.Service
             city.AlternateName = updateCity.AlternateName;
             city.Latitude = updateCity.Latitude;
             city.Longitude = updateCity.Longitude;
+            city.FeatureClass = updateCity.FeatureClass;
+            city.FeatureCode = updateCity.FeatureCode;
+            city.CountryCode = updateCity.CountryCode;
+            city.Cc2 = updateCity.Cc2;
+            city.Population = updateCity.Population;
+            city.Elevation = updateCity.Elevation;
+            city.Dem = updateCity.Dem;
+            city.TimeZone = updateCity.TimeZone;
+            city.ModificationDate = DateTime.UtcNow;
 
             await DataBaseContext.SaveChangesAsync();
 

@@ -80,11 +80,8 @@ public class CitiesController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult<long>> CreateCity(CreateCityDto createCity)
     {
-        if (createCity.Id != 0)
-        {
-            return BadRequest("Id не должен быть заполнен");
-        }
         var cityId = await _cityService.CreateCityAsync(createCity);
+
         return Ok(cityId);
     }
 
@@ -100,7 +97,6 @@ public class CitiesController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> UpdateCity(long id, UpdateCityDto updateCity)
     {
-        if (updateCity.Id != 0) return BadRequest("Id не должен быть заполнен");
         await _cityService.UpdateCityAsync(id, updateCity);
 
         return Ok();
