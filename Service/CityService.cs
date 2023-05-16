@@ -1,8 +1,5 @@
 ﻿using GeoInfo.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Xml.Linq;
 
 namespace GeoInfo.Service
 {
@@ -87,11 +84,23 @@ namespace GeoInfo.Service
         /// <summary>
         /// Добавление нового города
         /// </summary>
-        /// <param name="establishedCity">Модель города</param>
+        /// <param name="createCityDto">Модель города</param>
         /// <returns>Идентификатор созданного города</returns>
-        public async Task<long> CreateCityAsync(CreateCityDto establishedCity)
+        public async Task<long> CreateCityAsync(CreateCityDto createCityDto)
         {
-            var city = City.Create(establishedCity.Name, establishedCity.AsciiName, establishedCity.AlternateName, establishedCity.Latitude, establishedCity.Longitude, establishedCity.FeatureClass, establishedCity.FeatureCode, establishedCity.CountryCode, establishedCity.Cc2, establishedCity.Population, establishedCity.Elevation, establishedCity.Dem, establishedCity.TimeZone);
+            var city = City.Create(createCityDto.Name,
+                                   createCityDto.AsciiName,
+                                   createCityDto.AlternateName,
+                                   createCityDto.Latitude, 
+                                   createCityDto.Longitude, 
+                                   createCityDto.FeatureClass, 
+                                   createCityDto.FeatureCode, 
+                                   createCityDto.CountryCode, 
+                                   createCityDto.Cc2, 
+                                   createCityDto.Population, 
+                                   createCityDto.Elevation, 
+                                   createCityDto.Dem, 
+                                   createCityDto.TimeZone);
             
             await DataBaseContext.Cities.AddAsync(city);
             
@@ -104,27 +113,27 @@ namespace GeoInfo.Service
         /// Обновление информации о городе по его идентификатору
         /// </summary>
         /// <param name="id">Идентификатор города</param>
-        /// <param name="updateCity">Данные о городе</param>
-        public async Task UpdateCityAsync(long id, UpdateCityDto updateCity)
+        /// <param name="updateCityDto">Данные о городе</param>
+        public async Task UpdateCityAsync(long id, UpdateCityDto updateCityDto)
         {
 
             var city = await DataBaseContext.Cities.FirstOrDefaultAsync(c => c.Id == id);
 
             if (city != null) return;
 
-            city.Name = updateCity.Name;
-            city.AsciiName = updateCity.AsciiName;
-            city.AlternateName = updateCity.AlternateName;
-            city.Latitude = updateCity.Latitude;
-            city.Longitude = updateCity.Longitude;
-            city.FeatureClass = updateCity.FeatureClass;
-            city.FeatureCode = updateCity.FeatureCode;
-            city.CountryCode = updateCity.CountryCode;
-            city.Cc2 = updateCity.Cc2;
-            city.Population = updateCity.Population;
-            city.Elevation = updateCity.Elevation;
-            city.Dem = updateCity.Dem;
-            city.TimeZone = updateCity.TimeZone;
+            city.Name = updateCityDto.Name;
+            city.AsciiName = updateCityDto.AsciiName;
+            city.AlternateName = updateCityDto.AlternateName;
+            city.Latitude = updateCityDto.Latitude;
+            city.Longitude = updateCityDto.Longitude;
+            city.FeatureClass = updateCityDto.FeatureClass;
+            city.FeatureCode = updateCityDto.FeatureCode;
+            city.CountryCode = updateCityDto.CountryCode;
+            city.Cc2 = updateCityDto.Cc2;
+            city.Population = updateCityDto.Population;
+            city.Elevation = updateCityDto.Elevation;
+            city.Dem = updateCityDto.Dem;
+            city.TimeZone = updateCityDto.TimeZone;
             city.ModificationDate = DateTime.UtcNow;
 
             await DataBaseContext.SaveChangesAsync();
