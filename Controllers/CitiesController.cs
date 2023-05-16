@@ -50,25 +50,26 @@ public class CitiesController : ControllerBase
         return Ok(dto);
     }
 
-    /// <summary>
-    /// Получение двух городов по названию
-    /// </summary>
-    /// <param name="name1">Название первого города</param>
-    /// <param name="name2">Название второго города</param>
-    /// <returns>Информация о городах</returns>
-    [HttpGet("{name1}/{name2}")]
-    [ProducesResponseType(typeof(IEnumerable<City>), 200)]
-    [ProducesResponseType(typeof(string), 400)]
-    [ProducesResponseType(typeof(string), 404)]
-    [ProducesResponseType(500)]
-    public async Task<ActionResult<IEnumerable<CityDto>>> GetTwoCities(string name1, string name2)
-    {
-        var cities = await _cityService.GetTwoCitiesAsync(name1, name2);
+    //TODO: исправить в CityService
+    ///// <summary>
+    ///// Получение двух городов по названию
+    ///// </summary>
+    ///// <param name="name1">Название первого города</param>
+    ///// <param name="name2">Название второго города</param>
+    ///// <returns>Информация о городах</returns>
+    //[HttpGet("{name1}/{name2}")]
+    //[ProducesResponseType(typeof(IEnumerable<City>), 200)]
+    //[ProducesResponseType(typeof(string), 400)]
+    //[ProducesResponseType(typeof(string), 404)]
+    //[ProducesResponseType(500)]
+    //public async Task<ActionResult<IEnumerable<CityDto>>> GetTwoCities(string name1, string name2)
+    //{
+    //    var cities = await _cityService.GetTwoCitiesAsync(name1, name2);
 
-        if (cities == null) return NotFound("Города не найдены");
+    //    if (cities == null) return NotFound("Города не найдены");
 
-        return Ok(cities);
-    }
+    //    return Ok(cities);
+    //}
 
     /// <summary>
     /// Добавление нового города
