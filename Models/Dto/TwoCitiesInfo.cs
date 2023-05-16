@@ -1,13 +1,13 @@
 ﻿namespace GeoInfo.Models
 {
-    public class TwoCitiesInfo<T>
+    public class TwoCitiesInfo
     {
-        public TwoCitiesInfo(IEnumerable<T> data, string info) 
+        public TwoCitiesInfo(IEnumerable<City> data, string info) 
         {
             Data = data;
             Info = info;
         }
-        public IEnumerable<T> Data { get; set; }
+        public IEnumerable<City> Data { get; set; }
 
         public string Info { get; set; }
     }

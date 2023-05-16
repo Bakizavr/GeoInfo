@@ -2,18 +2,17 @@
 {
     public class CityDto
     {
-        public long Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 
         public string AsciiName { get; set; }
 
-
         public string AlternateName { get; set; }
 
-        public string Latitude { get; set; }
+        public decimal Latitude { get; set; }
 
-        public string Longitude { get; set; }
+        public decimal Longitude { get; set; }
 
         public string FeatureClass { get; set; }
 
@@ -23,19 +22,11 @@
 
         public string Cc2 { get; set; }
 
-        public string Admin1Code { get; set; }
+        public int Population { get; set; }
 
-        public string Admin2Code { get; set; }
+        public int Elevation { get; set; }
 
-        public string Admin3Code { get; set; }
-
-        public string Admin4Code { get; set; }
-
-        public string Population { get; set; }
-
-        public string Elevation { get; set; }
-
-        public string Dem { get; set; }
+        public int Dem { get; set; }
 
         public string TimeZone { get; set; }
 
@@ -60,10 +51,6 @@
                 FeatureCode = city.FeatureCode,
                 CountryCode = city.CountryCode,
                 Cc2 = city.Cc2,
-                Admin1Code = city.Admin1Code,
-                Admin2Code = city.Admin2Code,
-                Admin3Code = city.Admin3Code,
-                Admin4Code = city.Admin4Code,
                 Population = city.Population,
                 Elevation = city.Elevation,
                 Dem = city.Dem,

@@ -1,7 +1,5 @@
 ﻿using GeoInfo.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace GeoInfo.Service
 {
@@ -43,103 +41,104 @@ namespace GeoInfo.Service
             var dto = items.Select(city => CityDto.CreateCityDto(city));
             return new CollectionViewModel<CityDto>(dto, count);
         }
+        //TODO: исправить замечания в классе TwoCitiesInfo
         /// <summary>
         /// Получение двух городов по названию
         /// </summary>
         /// <param name="name1">Название первого города</param>
         /// <param name="name2">Название второго города</param>
         /// <returns>Информация о городах</returns>
-        public async Task<TwoCitiesInfo<CityDto>> GetTwoCitiesAsync(string name1, string name2)
-        {
-            var city1 = await DataBaseContext
-                .Cities
-                .AsNoTracking()
-                .Where(city => city.Name == name1)
-                .OrderByDescending(city => city.Population)
-                .FirstOrDefaultAsync();
+        //public async Task<TwoCitiesInfo<CityDto>> GetTwoCitiesAsync(string name1, string name2)
+        //{
+        //    var cities = await DataBaseContext.Cities
+        //        .Where(x => EF.Functions.ILike(x.Name, $"%{name1}%") ||
+        //                    EF.Functions.ILike(x.Name, $"%{name2}%"))
+        //        .GroupBy(x => x.Name,
+        //            (s, cities) => cities.OrderByDescending(c => c.Population).First())
+        //        .AsNoTracking()
+        //        .ToListAsync();
 
-            var city2 = await DataBaseContext
-                .Cities
-                .AsNoTracking()
-                .Where(city => city.Name == name2)
-                .OrderByDescending(city => city.Population)
-                .FirstOrDefaultAsync();
+        //    string info1 = "";
+        //    string info2 = "";
 
-            var cities = new List<City> { city1, city2 };
+        //    if (cities.Count() == 2)
+        //    {
+        //        if (city1.Latitude) > (city2.Latitude) { info1 = $"Город {city1.Name} находится севернее города {city2.Name}."; }
+        //        else { info1 = $"Город {city2.Name} находится севернее города {city1.Name}."; }
 
-            var _cities = cities.Where(x => x != null).Select(city => CityDto.CreateCityDto(city)).ToList();
+        //        if (city1.TimeZone == city2.TimeZone) { info2 = "Города в одной временной зоне"; }
+        //        else
+        //        {
+        //            var _cityDict = new TimeZoneDict();
+        //            _cityDict.Dict();
+        //            var timeOfCity1 = _cityDict._timeZones[city1.TimeZone];
+        //            var timeOfCity2 = _cityDict._timeZones[city2.TimeZone];
+        //            info2 = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(timeOfCity2 - timeOfCity1)} час(а).";
+        //        }
+        //    }
 
-            string info1 = "";
-            string info2 = "";
+        //    var Info = info1 + " " + info2;
 
-            if (_cities.Count() == 2)
-            {
-                if (Convert.ToDouble(city1.Latitude) > Convert.ToDouble(city2.Latitude)) { info1 = $"Город {city1.Name} находится севернее города {city2.Name}."; }
-                else { info1 = $"Город {city2.Name} находится севернее города {city1.Name}."; }
-
-                if (city1.TimeZone == city2.TimeZone) { info2 = "Города в одной временной зоне"; }
-                else
-                {
-                    var _cityDict = new TimeZoneDict();
-                    _cityDict.Dict();
-                    var timeOfCity1 = _cityDict._timeZones[city1.TimeZone];
-                    var timeOfCity2 = _cityDict._timeZones[city2.TimeZone];
-                    info2 = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(timeOfCity2 - timeOfCity1)} час(а).";
-                }
-            }
-
-            var Info = info1 + " " + info2;
-
-            return new TwoCitiesInfo<CityDto>(_cities, Info);
-        }
+        //    return new TwoCitiesInfo<CityDto>(cities, Info);
+        //}
 
         /// <summary>
         /// Добавление нового города
         /// </summary>
-        /// <param name="createCity">Модель города</param>
+        /// <param name="createCityDto">Модель города</param>
         /// <returns>Идентификатор созданного города</returns>
-        public async Task<long> CreateCityAsync(CreateCity createCity)
+        public async Task<long> CreateCityAsync(CreateCityDto createCityDto)
         {
-            var _city = CreateCity.CreateCityDto(createCity);
-            await DataBaseContext.Cities.AddAsync(_city);
+            var city = City.Create(createCityDto.Name,
+                                   createCityDto.AsciiName,
+                                   createCityDto.AlternateName,
+                                   createCityDto.Latitude, 
+                                   createCityDto.Longitude, 
+                                   createCityDto.FeatureClass, 
+                                   createCityDto.FeatureCode, 
+                                   createCityDto.CountryCode, 
+                                   createCityDto.Cc2, 
+                                   createCityDto.Population, 
+                                   createCityDto.Elevation, 
+                                   createCityDto.Dem, 
+                                   createCityDto.TimeZone);
+            
+            await DataBaseContext.Cities.AddAsync(city);
+            
             await DataBaseContext.SaveChangesAsync();
-            return createCity.Id;
+
+            return city.Id;
         }
 
         /// <summary>
         /// Обновление информации о городе по его идентификатору
         /// </summary>
         /// <param name="id">Идентификатор города</param>
-        /// <param name="updateCity">Данные о городе</param>
-        public async Task UpdateCityAsync(long id, UpdateCity updateCity)
+        /// <param name="updateCityDto">Данные о городе</param>
+        public async Task UpdateCityAsync(long id, UpdateCityDto updateCityDto)
         {
-            var _city = UpdateCity.UpdateCityDto(updateCity);
 
             var city = await DataBaseContext.Cities.FirstOrDefaultAsync(c => c.Id == id);
 
             if (city != null) return;
 
-            city.Name = _city.Name;
-            city.AsciiName = _city.AsciiName;
-            city.AlternateName = _city.AlternateName;
-            city.Latitude = _city.Latitude;
-            city.Longitude = _city.Longitude;
-            city.FeatureClass = _city.FeatureClass;
-            city.FeatureCode = _city.FeatureCode;
-            city.CountryCode = _city.CountryCode;
-            city.Cc2 = _city.Cc2;
-            city.Admin1Code = _city.Admin1Code;
-            city.Admin2Code = _city.Admin2Code;
-            city.Admin3Code = _city.Admin3Code;
-            city.Admin4Code = _city.Admin4Code;
-            city.Population = _city.Population;
-            city.Elevation = _city.Elevation;
-            city.Dem = _city.Dem;
-            city.TimeZone = _city.TimeZone;
-            city.ModificationDate = _city.ModificationDate;
+            city.Name = updateCityDto.Name;
+            city.AsciiName = updateCityDto.AsciiName;
+            city.AlternateName = updateCityDto.AlternateName;
+            city.Latitude = updateCityDto.Latitude;
+            city.Longitude = updateCityDto.Longitude;
+            city.FeatureClass = updateCityDto.FeatureClass;
+            city.FeatureCode = updateCityDto.FeatureCode;
+            city.CountryCode = updateCityDto.CountryCode;
+            city.Cc2 = updateCityDto.Cc2;
+            city.Population = updateCityDto.Population;
+            city.Elevation = updateCityDto.Elevation;
+            city.Dem = updateCityDto.Dem;
+            city.TimeZone = updateCityDto.TimeZone;
+            city.ModificationDate = DateTime.UtcNow;
 
             await DataBaseContext.SaveChangesAsync();
-            return;
+
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-using GeoInfo;
+﻿using GeoInfo;
 using GeoInfo.Extensions;
 using GeoInfo.Models;
 using GeoInfo.Service;
@@ -12,6 +12,7 @@ IServiceCollection services = builder.Services;
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connection));
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);//Исправляет проблему записи данных формата DateTime в БД
 services.AddControllers();
 services.AddScoped<CityService>();
 
