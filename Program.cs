@@ -1,25 +1,17 @@
-﻿using GeoInfo;
-using GeoInfo.Extensions;
-using GeoInfo.Models;
+﻿using GeoInfo.Extensions;
 using GeoInfo.Service;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-IServiceCollection services = builder.Services;
+builder.Services.RegisterDataBase(builder.Configuration);
 
-/*Вместо этого "var connection = builder.Configuration.GetConnectionString("DefaultConnection");
-                services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connection));
-                AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);//Исправляет проблему записи данных формата DateTime в БД"
-добавил метод расширения*/
-services.RegistreDataBase(builder);
+builder.Services.AddControllers();
 
-services.AddControllers();
+builder.Services.AddApplicationServices();
 
-services.RegistreServices();//Вместо этого "services.AddScoped<CityService>();" добавил метод расширения
-
-services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "GeoInfo", Version = "v1" });
 

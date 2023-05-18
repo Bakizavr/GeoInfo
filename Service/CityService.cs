@@ -48,7 +48,7 @@ namespace GeoInfo.Service
         /// <param name="name1">Название первого города</param>
         /// <param name="name2">Название второго города</param>
         /// <returns>Информация о городах</returns>
-        public async Task<TwoCitiesInfo> GetTwoCitiesAsync(string name1, string name2)
+        public async Task<TwoCitiesInfoDto> GetTwoCitiesAsync(string name1, string name2)
         {
             var cities = await DataBaseContext.Cities
                 .Where(x => EF.Functions.ILike(x.Name, $"{name1}") ||
@@ -58,28 +58,25 @@ namespace GeoInfo.Service
                 .AsNoTracking()
                 .ToListAsync();
 
-            string info1 = "";
-            string info2 = "";
+            var latitudeDifference = "";
+            var timeDifference = "";
 
             if (cities.Count() == 2)
             {
-                if (cities[0].Latitude > cities[1].Latitude) { info1 = $"Город {cities[0].Name} находится севернее города {cities[1].Name}."; }
-                else { info1 = $"Город {cities[1].Name} находится севернее города {cities[0].Name}."; }
+                if (cities[0].Latitude > cities[1].Latitude) {latitudeDifference = $"Город {cities[0].Name} находится севернее города {cities[1].Name}.";}
+                else {latitudeDifference = $"Город {cities[1].Name} находится севернее города {cities[0].Name}.";}
 
-                if (cities[0].TimeZone == cities[1].TimeZone) { info2 = "Города в одной временной зоне"; }
+                if (cities[0].TimeZone == cities[1].TimeZone) {timeDifference = "Города в одной временной зоне";}
                 else
                 {
-                    var _cityDict = new TimeZoneDict();
-                    _cityDict.Dict();
-                    var timeOfCity1 = _cityDict._timeZones[cities[0].TimeZone];
-                    var timeOfCity2 = _cityDict._timeZones[cities[1].TimeZone];
-                    info2 = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(timeOfCity2 - timeOfCity1)} час(а).";
+                    var cityDict = new TimeZoneDict();
+                    var timeOfCity1 = cityDict.timeZones[cities[0].TimeZone];
+                    var timeOfCity2 = cityDict.timeZones[cities[1].TimeZone];
+                    latitudeDifference = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(timeOfCity2 - timeOfCity1)} час(а).";
                 }
             }
 
-            var Info = info1 + " " + info2;
-
-            return new TwoCitiesInfo(cities, Info);
+            return new TwoCitiesInfoDto(cities, latitudeDifference, timeDifference);
         }
 
         /// <summary>
@@ -92,19 +89,19 @@ namespace GeoInfo.Service
             var city = City.Create(createCityDto.Name,
                                    createCityDto.AsciiName,
                                    createCityDto.AlternateName,
-                                   createCityDto.Latitude, 
-                                   createCityDto.Longitude, 
-                                   createCityDto.FeatureClass, 
-                                   createCityDto.FeatureCode, 
-                                   createCityDto.CountryCode, 
-                                   createCityDto.Cc2, 
-                                   createCityDto.Population, 
-                                   createCityDto.Elevation, 
-                                   createCityDto.Dem, 
+                                   createCityDto.Latitude,
+                                   createCityDto.Longitude,
+                                   createCityDto.FeatureClass,
+                                   createCityDto.FeatureCode,
+                                   createCityDto.CountryCode,
+                                   createCityDto.Cc2,
+                                   createCityDto.Population,
+                                   createCityDto.Elevation,
+                                   createCityDto.Dem,
                                    createCityDto.TimeZone);
-            
+
             await DataBaseContext.Cities.AddAsync(city);
-            
+
             await DataBaseContext.SaveChangesAsync();
 
             return city.Id;

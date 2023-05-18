@@ -2,22 +2,19 @@
 {
     public class TimeZoneDict
     {
-        public Dictionary<string, int> _timeZones { get; set; }
-        public void Dict()
+        public Dictionary<string, int> timeZones = new Dictionary<string, int>()
         {
-            _timeZones = new Dictionary<string, int>();
-
-            _timeZones.Add("Europe/Kaliningrad", 0);
-            _timeZones.Add("Europe/Moscow", 1);
-            _timeZones.Add("Europe/Samara", 2);
-            _timeZones.Add("Asia/Yekaterinburg", 3);
-            _timeZones.Add("Asia/Omsk", 4);
-            _timeZones.Add("Asia/Krasnoyarsk", 5);
-            _timeZones.Add("Asia/Irkutsk", 6);
-            _timeZones.Add("Asia/Yakutsk", 7);
-            _timeZones.Add("Asia/Vladivostok", 8);
-            _timeZones.Add("Asia/Magadan", 9);
-            _timeZones.Add("Asia/Kamchatka", 10);
-        }
+            {"Europe/Kaliningrad", 0},
+            {"Europe/Moscow", 1},
+            {"Europe/Samara", 2},
+            {"Asia/Yekaterinburg", 3},
+            {"Asia/Omsk", 4},
+            {"Asia/Krasnoyarsk", 5},
+            {"Asia/Irkutsk", 6},
+            {"Asia/Yakutsk", 7},
+            {"Asia/Vladivostok", 8},
+            {"Asia/Magadan", 9},
+            {"Asia/Kamchatka", 10},
+        };
     }
 }
