@@ -11,16 +11,6 @@ builder.Services.AddControllers();
 
 builder.Services.AddApplicationServices();
 
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "GeoInfo", Version = "v1" });
-
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
-    c.IncludeXmlComments(xmlPath);
-});
-
 WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())

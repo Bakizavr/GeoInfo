@@ -1,8 +1,8 @@
 ﻿namespace GeoInfo.Models
 {
-    public class TimeZoneDict
+    public static class ConvertTimeZonesToDigital
     {
-        public Dictionary<string, int> timeZones = new Dictionary<string, int>()
+        private static Dictionary<string, int> TimeZones = new ()
         {
             {"Europe/Kaliningrad", 0},
             {"Europe/Moscow", 1},
@@ -16,5 +16,12 @@
             {"Asia/Magadan", 9},
             {"Asia/Kamchatka", 10},
         };
+
+        public static int GetValueFromTimeZones(string timeZone)
+        {
+            var timeOfCity = TimeZones[timeZone];
+            
+            return timeOfCity;
+        }
     }
 }

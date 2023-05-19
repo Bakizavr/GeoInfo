@@ -16,12 +16,12 @@ namespace GeoInfo.Service
         /// </summary>
         /// <param name="id">Идентификатор города</param>
         /// <returns>Модель города</returns>
-        public async Task<CityDto> GetCityByIdAsync(long id)
+        public async Task<CityDto> GetCityByIdAsync(long id, CancellationToken cancellationToken)
         {
             var city = await DataBaseContext
                 .Cities
                 .AsNoTracking()
-                .FirstOrDefaultAsync(city => city.Id == id);
+                .FirstOrDefaultAsync(city => city.Id == id, cancellationToken);
 
             return CityDto.CreateCityDto(city);
         }
@@ -32,13 +32,16 @@ namespace GeoInfo.Service
         /// <param name="page">Номер страницы</param>
         /// <param name="pageSize">Количество городов на странице</param>
         /// <returns>Возврат списка городов с их информацией</returns>
-        public async Task<CollectionViewModel<CityDto>> GetPageAsync(int page, int pageSize)
+        public async Task<CollectionViewModel<CityDto>> GetPageAsync(int page, int pageSize, CancellationToken cancellationToken)
         {
             var source = DataBaseContext.Cities;
-            var count = await source.CountAsync();
-            var items = await source.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            var count = await source.CountAsync(cancellationToken);
+
+            var items = await source.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(cancellationToken);
 
             var dto = items.Select(city => CityDto.CreateCityDto(city));
+
             return new CollectionViewModel<CityDto>(dto, count);
         }
 
@@ -48,7 +51,7 @@ namespace GeoInfo.Service
         /// <param name="name1">Название первого города</param>
         /// <param name="name2">Название второго города</param>
         /// <returns>Информация о городах</returns>
-        public async Task<TwoCitiesInfoDto> GetTwoCitiesAsync(string name1, string name2)
+        public async Task<TwoCitiesInfoDto> GetTwoCitiesAsync(string name1, string name2, CancellationToken cancellationToken)
         {
             var cities = await DataBaseContext.Cities
                 .Where(x => EF.Functions.ILike(x.Name, $"{name1}") ||
@@ -56,27 +59,14 @@ namespace GeoInfo.Service
                 .GroupBy(x => x.Name,
                     (s, cities) => cities.OrderByDescending(c => c.Population).First())
                 .AsNoTracking()
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
-            var latitudeDifference = "";
-            var timeDifference = "";
+            var latitudeDifference = string.Empty;
+            var timeDifference = string.Empty;
 
-            if (cities.Count() == 2)
-            {
-                if (cities[0].Latitude > cities[1].Latitude) {latitudeDifference = $"Город {cities[0].Name} находится севернее города {cities[1].Name}.";}
-                else {latitudeDifference = $"Город {cities[1].Name} находится севернее города {cities[0].Name}.";}
+            var latitudeAndTime = GetInfoAboutLatitudeTimeDifference(cities, (latitudeDifference, timeDifference));
 
-                if (cities[0].TimeZone == cities[1].TimeZone) {timeDifference = "Города в одной временной зоне";}
-                else
-                {
-                    var cityDict = new TimeZoneDict();
-                    var timeOfCity1 = cityDict.timeZones[cities[0].TimeZone];
-                    var timeOfCity2 = cityDict.timeZones[cities[1].TimeZone];
-                    latitudeDifference = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(timeOfCity2 - timeOfCity1)} час(а).";
-                }
-            }
-
-            return new TwoCitiesInfoDto(cities, latitudeDifference, timeDifference);
+            return new TwoCitiesInfoDto(cities, latitudeAndTime.Item1, latitudeAndTime.Item2);
         }
 
         /// <summary>
@@ -84,7 +74,7 @@ namespace GeoInfo.Service
         /// </summary>
         /// <param name="createCityDto">Модель города</param>
         /// <returns>Идентификатор созданного города</returns>
-        public async Task<long> CreateCityAsync(CreateCityDto createCityDto)
+        public async Task<long> CreateCityAsync(CreateCityDto createCityDto, CancellationToken cancellationToken)
         {
             var city = City.Create(createCityDto.Name,
                                    createCityDto.AsciiName,
@@ -100,9 +90,9 @@ namespace GeoInfo.Service
                                    createCityDto.Dem,
                                    createCityDto.TimeZone);
 
-            await DataBaseContext.Cities.AddAsync(city);
+            await DataBaseContext.Cities.AddAsync(city, cancellationToken);
 
-            await DataBaseContext.SaveChangesAsync();
+            await DataBaseContext.SaveChangesAsync(cancellationToken);
 
             return city.Id;
         }
@@ -112,10 +102,9 @@ namespace GeoInfo.Service
         /// </summary>
         /// <param name="id">Идентификатор города</param>
         /// <param name="updateCityDto">Данные о городе</param>
-        public async Task UpdateCityAsync(long id, UpdateCityDto updateCityDto)
+        public async Task UpdateCityAsync(long id, UpdateCityDto updateCityDto, CancellationToken cancellationToken)
         {
-
-            var city = await DataBaseContext.Cities.FirstOrDefaultAsync(c => c.Id == id);
+            var city = await DataBaseContext.Cities.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
             if (city != null) return;
 
@@ -134,22 +123,54 @@ namespace GeoInfo.Service
             city.TimeZone = updateCityDto.TimeZone;
             city.ModificationDate = DateTime.UtcNow;
 
-            await DataBaseContext.SaveChangesAsync();
-
+            await DataBaseContext.SaveChangesAsync(cancellationToken);
         }
 
         /// <summary>
         /// Удаление города по его идентификатору
         /// </summary>
         /// <param name="id">Идентификатор города</param>
-        public async Task DeleteCityAsync(long id)
+        public async Task DeleteCityAsync(long id, CancellationToken cancellationToken)
         {
-            var city = await DataBaseContext.Cities.FirstOrDefaultAsync(c => c.Id == id);
+            var city = await DataBaseContext.Cities.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+
+            if (city != null) return;
 
             DataBaseContext.Cities.Remove(city);
-            await DataBaseContext.SaveChangesAsync();
+                
+            await DataBaseContext.SaveChangesAsync(cancellationToken);
+        }
 
-            return;
+        private (string, string) GetInfoAboutLatitudeTimeDifference(List<City> cities, (string latitudeDifference, string timeDifference) latitudeAndTime)
+        {
+            var output = string.Format("Город {0} находится севернее города {1}.");
+
+            if (cities.Count() == 2)
+            {
+                if (cities[0].Latitude > cities[1].Latitude)
+                {
+                    latitudeAndTime.latitudeDifference = string.Format(output, cities[0].Name, cities[1].Name);
+                }
+                else
+                {
+                    latitudeAndTime.latitudeDifference = string.Format(output, cities[1].Name, cities[0].Name);
+                }
+
+                if (cities[0].TimeZone == cities[1].TimeZone)
+                {
+                    latitudeAndTime.timeDifference = "Города в одной временной зоне";
+                }
+                else
+                {
+                    var timeOfCity1 = ConvertTimeZonesToDigital.GetValueFromTimeZones(cities[0].TimeZone);
+
+                    var timeOfCity2 = ConvertTimeZonesToDigital.GetValueFromTimeZones(cities[1].TimeZone);
+
+                    latitudeAndTime.timeDifference = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(timeOfCity2 - timeOfCity1)} час(а).";
+                }
+            }
+
+            return latitudeAndTime;
         }
     }
 }
