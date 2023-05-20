@@ -134,7 +134,7 @@ namespace GeoInfo.Service
         {
             var city = await DataBaseContext.Cities.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
-            if (city != null) return;
+            if (city == null) return;
 
             DataBaseContext.Cities.Remove(city);
                 
@@ -143,7 +143,7 @@ namespace GeoInfo.Service
 
         private (string, string) GetInfoAboutLatitudeTimeDifference(List<City> cities, (string latitudeDifference, string timeDifference) latitudeAndTime)
         {
-            var output = string.Format("Город {0} находится севернее города {1}.");
+            var output = "Город {0} находится севернее города {1}.";
 
             if (cities.Count() == 2)
             {

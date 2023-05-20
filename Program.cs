@@ -1,7 +1,5 @@
 ﻿using GeoInfo.Extensions;
 using GeoInfo.Service;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

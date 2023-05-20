@@ -1,6 +1,5 @@
 ﻿using GeoInfo.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 
 namespace GeoInfo.Service
 {
