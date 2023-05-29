@@ -3,19 +3,19 @@ using Microsoft.EntityFrameworkCore;
 
 public class DataBaseInitializator
 {
-    public ApplicationDbContext applicactionDbContext;
+    private ApplicationDbContext applicationDbContext;
     public DataBaseInitializator(ApplicationDbContext applicationDbContext)
     {
-        applicactionDbContext = applicationDbContext;
+        this.applicationDbContext = applicationDbContext;
     }
 
     public async Task DataBaseInitializeAsync()
     {
-        if (await applicactionDbContext.Cities.AnyAsync())
+        if (await applicationDbContext.Cities.AnyAsync())
             return;
         Console.WriteLine("Start read data");
-        await applicactionDbContext.AddRangeAsync(GetCities());
-        await applicactionDbContext.SaveChangesAsync();
+        await applicationDbContext.AddRangeAsync(GetCities());
+        await applicationDbContext.SaveChangesAsync();
         Console.WriteLine("Finish read data");
     }
     private IEnumerable<City> GetCities()

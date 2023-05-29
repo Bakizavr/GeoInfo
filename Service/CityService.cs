@@ -61,12 +61,19 @@ namespace GeoInfo.Service
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
-            var latitudeDifference = string.Empty;
-            var timeDifference = string.Empty;
+            var info = string.Empty;
 
-            var latitudeAndTime = GetInfoAboutLatitudeTimeDifference(cities, (latitudeDifference, timeDifference));
+            if (cities.Count == 2)
+            {
+                var latitudeAndTime = GetInfoAboutLatitudeTimeDifference(cities);
+                info = latitudeAndTime.Item1 + " " + latitudeAndTime.Item2;
+            }
+            else
+            {
+                info = "Второй город не найден";
+            }
 
-            return new TwoCitiesInfoDto(cities, latitudeAndTime.Item1, latitudeAndTime.Item2);
+            return new TwoCitiesInfoDto(cities, info);
         }
 
         /// <summary>
@@ -106,7 +113,7 @@ namespace GeoInfo.Service
         {
             var city = await DataBaseContext.Cities.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
-            if (city != null) return;
+            if (city == null) return;
 
             city.Name = updateCityDto.Name;
             city.AsciiName = updateCityDto.AsciiName;
@@ -134,40 +141,42 @@ namespace GeoInfo.Service
         {
             var city = await DataBaseContext.Cities.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
-            if (city == null) return;
+            if (city == null)
+            {
+                throw new NotFoundException("Lololololo");
+            }
 
             DataBaseContext.Cities.Remove(city);
-                
+
             await DataBaseContext.SaveChangesAsync(cancellationToken);
         }
 
-        private (string, string) GetInfoAboutLatitudeTimeDifference(List<City> cities, (string latitudeDifference, string timeDifference) latitudeAndTime)
+        private (string, string) GetInfoAboutLatitudeTimeDifference(List<City> cities)
         {
-            var output = "Город {0} находится севернее города {1}.";
+            (string, string) latitudeAndTime = (string.Empty, string.Empty);
 
-            if (cities.Count() == 2)
+            var latitudeDifferenceTemplate = "Город {0} находится севернее города {1}.";
+
+            if (cities[0].Latitude > cities[1].Latitude)
             {
-                if (cities[0].Latitude > cities[1].Latitude)
-                {
-                    latitudeAndTime.latitudeDifference = string.Format(output, cities[0].Name, cities[1].Name);
-                }
-                else
-                {
-                    latitudeAndTime.latitudeDifference = string.Format(output, cities[1].Name, cities[0].Name);
-                }
+                latitudeAndTime.Item1 = string.Format(latitudeDifferenceTemplate, cities[0].Name, cities[1].Name);
+            }
+            else
+            {
+                latitudeAndTime.Item1 = string.Format(latitudeDifferenceTemplate, cities[1].Name, cities[0].Name);
+            }
 
-                if (cities[0].TimeZone == cities[1].TimeZone)
-                {
-                    latitudeAndTime.timeDifference = "Города в одной временной зоне";
-                }
-                else
-                {
-                    var timeOfCity1 = ConvertTimeZonesToDigital.GetValueFromTimeZones(cities[0].TimeZone);
+            if (cities[0].TimeZone == cities[1].TimeZone)
+            {
+                latitudeAndTime.Item2 = "Города в одной временной зоне";
+            }
+            else
+            {
+                var timeOfCity1 = TimeZonesToDigitalConverter.Convert(cities[0].TimeZone);
 
-                    var timeOfCity2 = ConvertTimeZonesToDigital.GetValueFromTimeZones(cities[1].TimeZone);
+                var timeOfCity2 = TimeZonesToDigitalConverter.Convert(cities[1].TimeZone);
 
-                    latitudeAndTime.timeDifference = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(timeOfCity2 - timeOfCity1)} час(а).";
-                }
+                latitudeAndTime.Item2 = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(timeOfCity2 - timeOfCity1)} час(а).";
             }
 
             return latitudeAndTime;

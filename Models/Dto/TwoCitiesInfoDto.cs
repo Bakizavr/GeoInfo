@@ -2,16 +2,13 @@
 {
     public class TwoCitiesInfoDto
     {
-        public TwoCitiesInfoDto(IEnumerable<City> data, string latitude, string time) 
+        public TwoCitiesInfoDto(IEnumerable<City> data, string info) 
         {
             Data = data;
-            LatitudeDifference = latitude;
-            TimeDifference = time;
+            Info = info;
         }
         public IEnumerable<City> Data { get; set; }
 
-        public string LatitudeDifference { get; set; }
-
-        public string TimeDifference { get; set; }
+        public string Info { get; set; }
     }
 }
