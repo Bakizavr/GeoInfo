@@ -143,7 +143,7 @@ namespace GeoInfo.Service
 
             if (city == null)
             {
-                throw new NotFoundException("Lololololo");
+                throw new NotFoundException("Город не найден");
             }
 
             DataBaseContext.Cities.Remove(city);
