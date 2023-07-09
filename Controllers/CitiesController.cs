@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace GeoInfo.Controllers;
 [Route("api/v1/[controller]")]
 [ApiController]
-[CustomExceptionFilterAttribute]
 public class CitiesController : ControllerBase
 {
     private readonly CityService _cityService;
