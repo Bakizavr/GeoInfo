@@ -8,6 +8,11 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<CityService>();
 
+        return services;
+    }
+
+    public static IServiceCollection AddSwagger(this IServiceCollection services)
+    {
         services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "GeoInfo", Version = "v1" });

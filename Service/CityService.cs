@@ -23,6 +23,11 @@ namespace GeoInfo.Service
                 .AsNoTracking()
                 .FirstOrDefaultAsync(city => city.Id == id, cancellationToken);
 
+            if(city == null)
+            {
+                throw new NotFoundException("Город не найден");
+            }
+
             return CityDto.CreateCityDto(city);
         }
 
@@ -61,17 +66,7 @@ namespace GeoInfo.Service
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
-            var info = string.Empty;
-
-            if (cities.Count == 2)
-            {
-                var latitudeAndTime = GetInfoAboutLatitudeTimeDifference(cities);
-                info = latitudeAndTime.Item1 + " " + latitudeAndTime.Item2;
-            }
-            else
-            {
-                info = "Второй город не найден";
-            }
+            var info = GetInfoAboutLatitudeTimeDifference(cities);
 
             return new TwoCitiesInfoDto(cities, info);
         }
@@ -113,7 +108,10 @@ namespace GeoInfo.Service
         {
             var city = await DataBaseContext.Cities.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
-            if (city == null) return;
+            if (city == null)
+            {
+                throw new NotFoundException("Город не найден");
+            }
 
             city.Name = updateCityDto.Name;
             city.AsciiName = updateCityDto.AsciiName;
@@ -151,35 +149,31 @@ namespace GeoInfo.Service
             await DataBaseContext.SaveChangesAsync(cancellationToken);
         }
 
-        private (string, string) GetInfoAboutLatitudeTimeDifference(List<City> cities)
+        private string GetInfoAboutLatitudeTimeDifference(List<City> cities)
         {
-            (string, string) latitudeAndTime = (string.Empty, string.Empty);
+            string info = string.Empty;
 
-            var latitudeDifferenceTemplate = "Город {0} находится севернее города {1}.";
+            (string latitude, string Time) latitudeAndTime = (string.Empty, string.Empty);
 
-            if (cities[0].Latitude > cities[1].Latitude)
+            if (cities.Count == 1) return info = "Второй город не найден";
+
+            if (cities.Count == 2)
             {
-                latitudeAndTime.Item1 = string.Format(latitudeDifferenceTemplate, cities[0].Name, cities[1].Name);
-            }
-            else
-            {
-                latitudeAndTime.Item1 = string.Format(latitudeDifferenceTemplate, cities[1].Name, cities[0].Name);
-            }
+                var latitudeDifferenceTemplate = "Город {0} находится севернее города {1}.";
 
-            if (cities[0].TimeZone == cities[1].TimeZone)
-            {
-                latitudeAndTime.Item2 = "Города в одной временной зоне";
-            }
-            else
-            {
-                var timeOfCity1 = TimeZonesToDigitalConverter.Convert(cities[0].TimeZone);
+                _ = cities[0].Latitude > cities[1].Latitude 
+                    ? latitudeAndTime.latitude = string.Format(latitudeDifferenceTemplate, cities[0].Name, cities[1].Name) 
+                    : latitudeAndTime.latitude = string.Format(latitudeDifferenceTemplate, cities[1].Name, cities[0].Name);
 
-                var timeOfCity2 = TimeZonesToDigitalConverter.Convert(cities[1].TimeZone);
+                _ = cities[0].TimeZone == cities[1].TimeZone 
+                    ? latitudeAndTime.Time = "Города в одной временной зоне"
+                    : latitudeAndTime.Time = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(TimeZonesToDigitalConverter.Convert(cities[1].TimeZone) -
+                    TimeZonesToDigitalConverter.Convert(cities[0].TimeZone))} час(а).";
 
-                latitudeAndTime.Item2 = $"Города в разных временных зонах. Разность во времени составляет {Math.Abs(timeOfCity2 - timeOfCity1)} час(а).";
+                info = latitudeAndTime.latitude + " " + latitudeAndTime.Time;
             }
 
-            return latitudeAndTime;
+            return info;
         }
     }
 }

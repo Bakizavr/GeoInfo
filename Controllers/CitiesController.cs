@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GeoInfo.Controllers;
 [Route("api/v1/[controller]")]
 [ApiController]
+[CustomExceptionFilterAttribute]
 public class CitiesController : ControllerBase
 {
     private readonly CityService _cityService;
@@ -26,8 +27,6 @@ public class CitiesController : ControllerBase
     public async Task<ActionResult<CityDto>> GetCityById(long id, CancellationToken cancellationToken)
     {
         var city = await _cityService.GetCityByIdAsync(id, cancellationToken);
-
-        if (city == null) return NotFound("Город не найден");
 
         return Ok(city);
     }
@@ -57,15 +56,13 @@ public class CitiesController : ControllerBase
     /// <param name="name2">Название второго города</param>
     /// <returns>Информация о городах</returns>
     [HttpGet("{name1}/{name2}")]
-    [ProducesResponseType(typeof(IEnumerable<CityDto>), 200)]
+    [ProducesResponseType(typeof(TwoCitiesInfoDto), 200)]
     [ProducesResponseType(typeof(string), 400)]
     [ProducesResponseType(typeof(string), 404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<IEnumerable<CityDto>>> GetTwoCities(string name1, string name2, CancellationToken cancellationToken)
+    public async Task<ActionResult<TwoCitiesInfoDto>> GetTwoCities(string name1, string name2, CancellationToken cancellationToken)
     {
         var cities = await _cityService.GetTwoCitiesAsync(name1, name2, cancellationToken);
-
-        if (cities.Data.Any() == false) return NotFound("Города не найдены");
 
         return Ok(cities);
     }
@@ -97,14 +94,7 @@ public class CitiesController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> UpdateCity(long id, UpdateCityDto updateCity, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _cityService.UpdateCityAsync(id, updateCity, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            return NotFound(ex.Message);
-        }
+        await _cityService.UpdateCityAsync(id, updateCity, cancellationToken);
 
         return Ok();
     }
@@ -119,14 +109,8 @@ public class CitiesController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> DeleteCity(long id, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _cityService.DeleteCityAsync(id, cancellationToken);
-        }
-        catch(NotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
+        await _cityService.DeleteCityAsync(id, cancellationToken);
+
         return Ok();
     }
 }

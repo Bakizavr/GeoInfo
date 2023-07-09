@@ -58,8 +58,7 @@ namespace GeoInfo.Models
 
         public static int Convert(string timeZone)
         {
-            if (TimeZones.TryGetValue(timeZone, out var zone)) return zone;
-            return 0;
+            return TimeZones.GetValueOrDefault<string, int>(timeZone);
         }
     }
 }

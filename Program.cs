@@ -1,16 +1,18 @@
 ﻿using GeoInfo.Extensions;
-using GeoInfo.Filters;
 using GeoInfo.Service;
+
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.RegisterDataBase(builder.Configuration);
 
+builder.Services.AddControllers(options => options.Filters.Add<CustomExceptionFilterAttribute>());
+
 builder.Services.AddControllers();
 
-//builder.Services.AddControllers(options => options.Filters.Add<CustomExceptionFilterAttribute>());
-
 builder.Services.AddServices();
+
+builder.Services.AddSwagger();
 
 WebApplication app = builder.Build();
 

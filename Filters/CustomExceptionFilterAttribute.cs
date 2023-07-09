@@ -1,16 +1,18 @@
-﻿using System.Net;
-using System.Web.Http.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using GeoInfo.Models;
 
-namespace GeoInfo.Filters
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+public class CustomExceptionFilterAttribute : ExceptionFilterAttribute
 {
-    public class CustomExceptionFilterAttribute: ExceptionFilterAttribute
+    public override void OnException(ExceptionContext context)
     {
-        public override void OnException(HttpActionExecutedContext context)
+        var exceptionMessage = string.Empty;
+
+        if (context.Exception is NotFoundException)
         {
-            if (context.Exception is NotImplementedException)
-            {
-                context.Response = new HttpResponseMessage(HttpStatusCode.NotImplemented);
-            }
+            exceptionMessage = context.Exception.Message;
         }
     }
 }

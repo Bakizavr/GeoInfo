@@ -3,24 +3,29 @@ using Microsoft.EntityFrameworkCore;
 
 public class DataBaseInitializator
 {
-    private ApplicationDbContext applicationDbContext;
+    private ApplicationDbContext _applicationDbContext;
     public DataBaseInitializator(ApplicationDbContext applicationDbContext)
     {
-        this.applicationDbContext = applicationDbContext;
+        _applicationDbContext = applicationDbContext;
     }
 
     public async Task DataBaseInitializeAsync()
     {
-        if (await applicationDbContext.Cities.AnyAsync())
+        if (await _applicationDbContext.Cities.AnyAsync())
             return;
+
         Console.WriteLine("Start read data");
-        await applicationDbContext.AddRangeAsync(GetCities());
-        await applicationDbContext.SaveChangesAsync();
+
+        await _applicationDbContext.AddRangeAsync(GetCities());
+
+        await _applicationDbContext.SaveChangesAsync();
+
         Console.WriteLine("Finish read data");
     }
     private IEnumerable<City> GetCities()
     {
         var lines = File.ReadLines("InputFiles\\CityData.txt");
+
         foreach (var line in lines)
         {
             yield return Map(line);
@@ -30,6 +35,7 @@ public class DataBaseInitializator
     private City Map(string line)
     {
         var subs = line.Split('\t');
+
         var city = new City()
         {
             Id = int.Parse(subs[0]),
