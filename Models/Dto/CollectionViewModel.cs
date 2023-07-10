@@ -1,15 +1,14 @@
-﻿namespace GeoInfo.Models
+﻿namespace GeoInfo.Models.Dto;
+
+public class CollectionViewModel<T>
 {
-    public class CollectionViewModel<T>
+    public CollectionViewModel(IEnumerable<T> data, int count)
     {
-        public CollectionViewModel(IEnumerable<T> data, int count)
-        {
-            Data = data;
-            TotalCount = count;
-        }
-
-        public IEnumerable<T> Data { get; set; }
-
-        public int TotalCount { get; set; }
+        Data = data;
+        TotalCount = count;
     }
+
+    public IEnumerable<T> Data { get; set; }
+
+    public int TotalCount { get; set; }
 }

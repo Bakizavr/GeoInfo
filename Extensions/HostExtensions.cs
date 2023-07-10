@@ -1,7 +1,8 @@
-﻿using GeoInfo.Models;
+﻿using GeoInfo;
+using GeoInfo.ApplicationdbContext;
+using GeoInfo.Service;
 using Microsoft.EntityFrameworkCore;
 using IHost = Microsoft.Extensions.Hosting.IHost;
-
 namespace GeoInfo.Extensions;
 
 public static class HostExtensions
@@ -24,7 +25,6 @@ public static class HostExtensions
         catch (Exception ex)
         {
             Console.WriteLine(ex.ToString());
-            //logger.Error(ex, "An error occurred while migrating or initializing the database");
         }
     }
 

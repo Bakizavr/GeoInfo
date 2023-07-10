@@ -1,8 +1,8 @@
-﻿using GeoInfo.Models;
+﻿using GeoInfo.Models.Dto;
 using GeoInfo.Service;
 using Microsoft.AspNetCore.Mvc;
-
 namespace GeoInfo.Controllers;
+
 [Route("api/v1/[controller]")]
 [ApiController]
 public class CitiesController : ControllerBase
@@ -20,14 +20,12 @@ public class CitiesController : ControllerBase
     /// <param name="id">Идентификатор города</param>
     /// <returns>Модель города</returns>
     [HttpGet("{id:long}")]
-    [ProducesResponseType(typeof(City), 200)]
+    [ProducesResponseType(typeof(CityDto), 200)]
     [ProducesResponseType(typeof(string), 404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<CityDto>> GetCityById(long id)
+    public async Task<ActionResult<CityDto>> GetCityById(long id, CancellationToken cancellationToken)
     {
-        var city = await _cityService.GetCityByIdAsync(id);
-
-        if (city == null) return NotFound("Город не найден");
+        var city = await _cityService.GetCityByIdAsync(id, cancellationToken);
 
         return Ok(city);
     }
@@ -39,37 +37,34 @@ public class CitiesController : ControllerBase
     /// <param name="pageSize">Количество городов на странице</param>
     /// <returns>Возврат списка городов с их информацией</returns>
     [HttpGet("{page:int}/{pageSize:int}")]
-    [ProducesResponseType(typeof(IEnumerable<City>), 200)]
+    [ProducesResponseType(typeof(CollectionViewModel<CityDto>), 200)]
     [ProducesResponseType(typeof(string), 400)]
     [ProducesResponseType(typeof(string), 404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<CollectionViewModel<CityDto>>> GetPageIndex(int page, int pageSize)
+    public async Task<ActionResult<CollectionViewModel<CityDto>>> GetPageIndex(int page, int pageSize, CancellationToken cancellationToken)
     {
-        var dto = await _cityService.GetPageAsync(page, pageSize);
+        var dto = await _cityService.GetPageAsync(page, pageSize, cancellationToken);
 
         return Ok(dto);
     }
 
-    //TODO: исправить в CityService
-    ///// <summary>
-    ///// Получение двух городов по названию
-    ///// </summary>
-    ///// <param name="name1">Название первого города</param>
-    ///// <param name="name2">Название второго города</param>
-    ///// <returns>Информация о городах</returns>
-    //[HttpGet("{name1}/{name2}")]
-    //[ProducesResponseType(typeof(IEnumerable<City>), 200)]
-    //[ProducesResponseType(typeof(string), 400)]
-    //[ProducesResponseType(typeof(string), 404)]
-    //[ProducesResponseType(500)]
-    //public async Task<ActionResult<IEnumerable<CityDto>>> GetTwoCities(string name1, string name2)
-    //{
-    //    var cities = await _cityService.GetTwoCitiesAsync(name1, name2);
+    /// <summary>
+    /// Получение двух городов по названию
+    /// </summary>
+    /// <param name="name1">Название первого города</param>
+    /// <param name="name2">Название второго города</param>
+    /// <returns>Информация о городах</returns>
+    [HttpGet("{name1}/{name2}")]
+    [ProducesResponseType(typeof(TwoCitiesInfoDto), 200)]
+    [ProducesResponseType(typeof(string), 400)]
+    [ProducesResponseType(typeof(string), 404)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<TwoCitiesInfoDto>> GetTwoCities(string name1, string name2, CancellationToken cancellationToken)
+    {
+        var cities = await _cityService.GetTwoCitiesAsync(name1, name2, cancellationToken);
 
-    //    if (cities == null) return NotFound("Города не найдены");
-
-    //    return Ok(cities);
-    //}
+        return Ok(cities);
+    }
 
     /// <summary>
     /// Добавление нового города
@@ -79,9 +74,9 @@ public class CitiesController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(long), 200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<long>> CreateCity(CreateCityDto createCity)
+    public async Task<ActionResult<long>> CreateCity(CreateCityDto createCity, CancellationToken cancellationToken)
     {
-        var cityId = await _cityService.CreateCityAsync(createCity);
+        var cityId = await _cityService.CreateCityAsync(createCity, cancellationToken);
 
         return Ok(cityId);
     }
@@ -96,9 +91,9 @@ public class CitiesController : ControllerBase
     [ProducesResponseType(typeof(string), 400)]
     [ProducesResponseType(typeof(string), 404)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> UpdateCity(long id, UpdateCityDto updateCity)
+    public async Task<IActionResult> UpdateCity(long id, UpdateCityDto updateCity, CancellationToken cancellationToken)
     {
-        await _cityService.UpdateCityAsync(id, updateCity);
+        await _cityService.UpdateCityAsync(id, updateCity, cancellationToken);
 
         return Ok();
     }
@@ -111,13 +106,9 @@ public class CitiesController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(typeof(string), 404)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> DeleteCity(long id)
+    public async Task<IActionResult> DeleteCity(long id, CancellationToken cancellationToken)
     {
-        var _city = await _cityService.GetCityByIdAsync(id);
-
-        if (_city == null) return NotFound("Город не найден");
-
-        await _cityService.DeleteCityAsync(id);
+        await _cityService.DeleteCityAsync(id, cancellationToken);
 
         return Ok();
     }

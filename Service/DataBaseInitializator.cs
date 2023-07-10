@@ -1,26 +1,34 @@
-﻿using GeoInfo.Models;
+﻿using GeoInfo;
+using GeoInfo.ApplicationdbContext;
+using GeoInfo.Models;
 using Microsoft.EntityFrameworkCore;
+namespace GeoInfo.Service;
 
 public class DataBaseInitializator
 {
-    public ApplicationDbContext _context;
+    private ApplicationDbContext _applicationDbContext;
     public DataBaseInitializator(ApplicationDbContext applicationDbContext)
     {
-        _context = applicationDbContext;
+        _applicationDbContext = applicationDbContext;
     }
 
     public async Task DataBaseInitializeAsync()
     {
-        if (await _context.Cities.AnyAsync())
+        if (await _applicationDbContext.Cities.AnyAsync())
             return;
+
         Console.WriteLine("Start read data");
-        await _context.AddRangeAsync(GetCities());
-        await _context.SaveChangesAsync();
+
+        await _applicationDbContext.AddRangeAsync(GetCities());
+
+        await _applicationDbContext.SaveChangesAsync();
+
         Console.WriteLine("Finish read data");
     }
     private IEnumerable<City> GetCities()
     {
         var lines = File.ReadLines("InputFiles\\CityData.txt");
+
         foreach (var line in lines)
         {
             yield return Map(line);
@@ -30,6 +38,7 @@ public class DataBaseInitializator
     private City Map(string line)
     {
         var subs = line.Split('\t');
+
         var city = new City()
         {
             Id = int.Parse(subs[0]),
