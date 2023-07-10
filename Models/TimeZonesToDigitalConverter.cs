@@ -1,7 +1,6 @@
-﻿using GeoInfo.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace GeoInfo.Models
+namespace GeoInfo
 {
     public static class TimeZonesToDigitalConverter
     {

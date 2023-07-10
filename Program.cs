@@ -1,7 +1,4 @@
-﻿using GeoInfo.Extensions;
-using GeoInfo.Filters;
-using GeoInfo.Service;
-
+﻿using GeoInfo;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

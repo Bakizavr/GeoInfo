@@ -1,7 +1,6 @@
-﻿using GeoInfo.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace GeoInfo.Service
+namespace GeoInfo
 {
     public static class DataBaseExtensions
     {

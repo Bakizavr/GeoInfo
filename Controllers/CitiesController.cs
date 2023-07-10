@@ -1,8 +1,6 @@
-﻿using GeoInfo.Models;
-using GeoInfo.Service;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace GeoInfo.Controllers;
+namespace GeoInfo;
 [Route("api/v1/[controller]")]
 [ApiController]
 public class CitiesController : ControllerBase

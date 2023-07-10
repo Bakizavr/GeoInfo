@@ -1,4 +1,4 @@
-﻿namespace GeoInfo.Models
+﻿namespace GeoInfo
 {
     public class NotFoundException:Exception
     {

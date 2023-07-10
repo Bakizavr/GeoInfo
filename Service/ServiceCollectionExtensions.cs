@@ -1,4 +1,4 @@
-﻿using GeoInfo.Service;
+﻿using GeoInfo;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
