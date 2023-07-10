@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GeoInfo.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace GeoInfo;
+namespace GeoInfo.ApplicationdbContext;
 
 /// <summary>
 /// Контекст базы данных

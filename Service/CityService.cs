@@ -1,6 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GeoInfo;
+using GeoInfo.ApplicationdbContext;
+using GeoInfo.Models;
+using GeoInfo.Models.Dto;
+using Microsoft.EntityFrameworkCore;
 
-namespace GeoInfo;
+namespace GeoInfo.Service;
 public class CityService
 {
     private ApplicationDbContext DataBaseContext;
@@ -21,7 +25,7 @@ public class CityService
             .AsNoTracking()
             .FirstOrDefaultAsync(city => city.Id == id, cancellationToken);
 
-        if(city == null)
+        if (city == null)
         {
             throw new NotFoundException("Город не найден");
         }
@@ -159,11 +163,11 @@ public class CityService
         {
             var latitudeDifferenceTemplate = "Город {0} находится севернее города {1}.";
 
-            latitudeAndTime.latitude = cities[0].Latitude > cities[1].Latitude 
-                ? string.Format(latitudeDifferenceTemplate, cities[0].Name, cities[1].Name) 
+            latitudeAndTime.latitude = cities[0].Latitude > cities[1].Latitude
+                ? string.Format(latitudeDifferenceTemplate, cities[0].Name, cities[1].Name)
                 : string.Format(latitudeDifferenceTemplate, cities[1].Name, cities[0].Name);
 
-            latitudeAndTime.latitude = cities[0].TimeZone == cities[1].TimeZone 
+            latitudeAndTime.latitude = cities[0].TimeZone == cities[1].TimeZone
                 ? "Города в одной временной зоне"
                 : $"Города в разных временных зонах. Разность во времени составляет {CalculateTimeDifference(cities[1].TimeZone, cities[0].TimeZone)} час(а).";
 

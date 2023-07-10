@@ -1,4 +1,4 @@
-﻿namespace GeoInfo
+﻿namespace GeoInfo.Models.Dto
 {
     public class UpdateCityDto
     {

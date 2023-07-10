@@ -1,4 +1,6 @@
 ﻿using GeoInfo;
+using GeoInfo.ApplicationdbContext;
+using GeoInfo.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class DataBaseInitializator

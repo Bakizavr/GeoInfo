@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 
-namespace GeoInfo
+namespace GeoInfo.Models
 {
     public static class TimeZonesToDigitalConverter
     {
-        private static Dictionary<string, int> TimeZones = new ()
+        private static Dictionary<string, int> TimeZones = new()
         {
             {"Asia/Almaty", 6},
             {"Asia/Anadyr", 12},
@@ -57,7 +57,7 @@ namespace GeoInfo
 
         public static int Convert(string timeZone)
         {
-            return TimeZones.GetValueOrDefault<string, int>(timeZone);
+            return TimeZones.GetValueOrDefault(timeZone);
         }
     }
 }

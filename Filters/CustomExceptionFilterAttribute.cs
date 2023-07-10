@@ -1,7 +1,8 @@
-﻿namespace GeoInfo;
+﻿namespace GeoInfo.Filters;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using GeoInfo.Models;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class CustomExceptionFilterAttribute : ExceptionFilterAttribute

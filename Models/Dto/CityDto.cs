@@ -1,4 +1,4 @@
-﻿namespace GeoInfo
+﻿namespace GeoInfo.Models.Dto
 {
     public class CityDto
     {
@@ -35,11 +35,11 @@
         /// </summary>
         /// <param name="city">Сущность города из базы данных</param>
         /// <returns>Возврат объекта DTO</returns>
-        public static CityDto CreateCityDto(City city) 
+        public static CityDto CreateCityDto(City city)
         {
             if (city == null) return null;
 
-            var dto = new CityDto 
+            var dto = new CityDto
             {
                 Id = city.Id,
                 Name = city.Name,

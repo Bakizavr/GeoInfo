@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GeoInfo;
+using GeoInfo.ApplicationdbContext;
+using Microsoft.EntityFrameworkCore;
 using IHost = Microsoft.Extensions.Hosting.IHost;
 
-namespace GeoInfo;
+namespace GeoInfo.Extensions;
 
 public static class HostExtensions
 {

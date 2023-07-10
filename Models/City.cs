@@ -1,4 +1,4 @@
-﻿namespace GeoInfo;
+﻿namespace GeoInfo.Models;
 public class City
 {
     /// <summary>
