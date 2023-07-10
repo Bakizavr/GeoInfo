@@ -41,7 +41,7 @@ namespace GeoInfo.Service
         {
             var source = DataBaseContext.Cities;
 
-            var count = await source.AsNoTracking().CountAsync(cancellationToken);
+            var count = await source.CountAsync(cancellationToken);
 
             var items = await source.AsNoTracking().Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(cancellationToken);
 
@@ -167,7 +167,7 @@ namespace GeoInfo.Service
 
                 latitudeAndTime.latitude = cities[0].TimeZone == cities[1].TimeZone 
                     ? "Города в одной временной зоне"
-                    : $"Города в разных временных зонах. Разность во времени составляет {TimeDifference(cities[1].TimeZone, cities[0].TimeZone)} час(а).";
+                    : $"Города в разных временных зонах. Разность во времени составляет {CalculateTimeDifference(cities[1].TimeZone, cities[0].TimeZone)} час(а).";
 
                 info = latitudeAndTime.latitude + " " + latitudeAndTime.Time;
             }
@@ -175,7 +175,7 @@ namespace GeoInfo.Service
             return info;
         }
 
-        int TimeDifference(string city1, string city2)
+        int CalculateTimeDifference(string city1, string city2)
         {
             return Math.Abs(TimeZonesToDigitalConverter.Convert(city1) -
                     TimeZonesToDigitalConverter.Convert(city2));
