@@ -1,6 +1,7 @@
 ﻿using GeoInfo.Service;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+namespace GeoInfo.Extensions;
 
 public static class ServiceCollectionExtensions
 {

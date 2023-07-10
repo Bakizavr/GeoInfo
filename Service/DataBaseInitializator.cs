@@ -2,6 +2,7 @@
 using GeoInfo.ApplicationdbContext;
 using GeoInfo.Models;
 using Microsoft.EntityFrameworkCore;
+namespace GeoInfo.Service;
 
 public class DataBaseInitializator
 {

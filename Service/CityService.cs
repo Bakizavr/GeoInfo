@@ -3,8 +3,8 @@ using GeoInfo.ApplicationdbContext;
 using GeoInfo.Models;
 using GeoInfo.Models.Dto;
 using Microsoft.EntityFrameworkCore;
-
 namespace GeoInfo.Service;
+
 public class CityService
 {
     private ApplicationDbContext DataBaseContext;
